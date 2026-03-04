@@ -3,62 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CoreX Xchange Withdrawal</title>
+<title>CoreXTradeX Withdrawal</title>
 
 <style>
 body{
-  margin:0;
-  font-family:system-ui;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+margin:0;
+background:#0b0f14;
+font-family:system-ui;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
+
 .card{
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.08);
-  padding:30px;
-  border-radius:20px;
-  width:360px;
-  box-shadow:0 15px 40px rgba(0,0,0,.4);
+background:#111827;
+padding:30px;
+border-radius:18px;
+width:340px;
+box-shadow:0 0 30px rgba(0,0,0,.4);
 }
+
 input,select{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  color:white;
+width:100%;
+padding:12px;
+margin:10px 0;
+background:#0b0f14;
+border:1px solid #263041;
+border-radius:10px;
+color:white;
 }
+
 button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#22c55e;
+color:white;
+font-weight:700;
+cursor:pointer;
+}
+
+#slideNote{
+position:fixed;
+bottom:-100px;
+left:50%;
+transform:translateX(-50%);
+background:#f97316;
+padding:12px 20px;
+border-radius:12px;
+transition:.5s;
 }
 </style>
 </head>
 <body>
 
 <div class="card">
-<h2>CoreX Xchange Withdrawal</h2>
-<select>
-<option>BTC</option>
-<option>SOL</option>
-<option>TRX</option>
-</select>
-<input placeholder="Amount">
-<input placeholder="Destination wallet">
-<button onclick="location='home.html'">Submit Withdrawal</button>
+<h2>Withdrawal</h2>
+
+<input id="amt" placeholder="Amount">
+<input id="destWallet" placeholder="Destination Wallet">
+
+<button id="withdrawBtn" onclick="withdraw()">Submit</button>
+
+<br><br>
+<a href="home.html" style="color:white">← Back</a>
 </div>
 
+<div id="slideNote"></div>
+
+<script>
+let balance=parseFloat(localStorage.balance)||69000;
+
+function withdraw(){
+let amt=parseFloat(document.getElementById("amt").value);
+let btn=document.getElementById("withdrawBtn");
+
+btn.disabled=true;
+btn.innerText="Processing...";
+btn.style.background="white";
+btn.style.color="#0b0f14";
+
+setTimeout(()=>{
+if(amt>balance){
+btn.innerText="Failed - Insufficient Balance";
+btn.style.background="#f6465d";
+document.getElementById("slideNote").innerText="Insufficient funds.";
+}else{
+balance-=amt;
+localStorage.balance=balance;
+btn.innerText="Withdrawal Successful";
+btn.style.background="#22c55e";
+document.getElementById("slideNote").innerText="Withdrawal processed.";
+}
+
+let slide=document.getElementById("slideNote");
+slide.style.bottom="20px";
+setTimeout(()=>slide.style.bottom="-100px",5000);
+
+setTimeout(()=>location="home.html",6000);
+
+},5000);
+}
+</script>
 </body>
 </html>
+Write to Collins Abraham
