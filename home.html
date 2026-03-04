@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaTrade Trading</title>
-
+<title>CoreX Xchange Monetization and Activation Sandbox</title>
 <style>
-body{
+/* ================= GLOBAL ================= */
+body {
   margin:0;
   background:#0b0f14;
   font-family:system-ui;
@@ -14,20 +14,25 @@ body{
   display:flex;
   flex-direction:column;
   align-items:center;
+  min-height:100vh;
   padding:20px;
+  transition: background 0.3s, color 0.3s;
 }
+body.light { background:#f9fafb; color:#0f172a; }
 
-.card{
+.card {
   background:#111827;
   padding:20px;
   border-radius:18px;
   width:100%;
   max-width:400px;
-  margin-bottom:20px;
   box-shadow:0 0 30px rgba(0,0,0,.4);
+  margin-bottom:20px;
+  transition: background 0.3s, color 0.3s;
 }
+body.light .card { background:#fff; color:#0f172a; }
 
-input,select{
+input, select {
   width:100%;
   padding:12px;
   margin:10px 0;
@@ -36,192 +41,161 @@ input,select{
   border-radius:10px;
   color:white;
 }
+body.light input, body.light select { background:#f1f1f1; color:#0f172a; }
 
-button{
+button {
   width:100%;
   padding:14px;
   border:none;
   border-radius:12px;
-  background:#22c55e;
+  background:#F3BA2F;
   color:white;
   font-weight:700;
   cursor:pointer;
-  transition:.3s;
+  transition: .3s;
 }
+button:hover { opacity:0.9; }
 
-button:hover{
-  opacity:.9;
-}
+.loading-dots span { animation:blink 1.4s infinite; font-weight:bold;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes blink {0%,80%,100%{opacity:0}40%{opacity:1}}
 
-/* ================= POPUP ANIMATION ================= */
-
-.popup{
+/* ================= POPUP ================= */
+.popup {
   position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  display:flex;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.7);
+  display:none;
   justify-content:center;
   align-items:center;
-  opacity:0;
-  pointer-events:none;
-  transition:.3s ease;
+  z-index:999;
 }
-
-.popup.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.popup-box{
+.popup-box {
   background:#111827;
   padding:20px;
   width:90%;
   max-width:400px;
-  border-radius:14px;
-  transform:scale(.8);
-  transition:.3s ease;
+  border-radius:12px;
+  text-align:center;
+  color:white;
 }
+body.light .popup-box { background:#fff; color:#0f172a; }
 
-.popup.active .popup-box{
-  transform:scale(1);
-}
-
-.wallet-box{
+.wallet-box {
   display:flex;
   justify-content:space-between;
   align-items:center;
   background:#0b0f14;
-  padding:10px;
-  border-radius:8px;
+  padding:8px;
+  border-radius:6px;
+  margin-bottom:10px;
   font-size:12px;
   word-break:break-all;
 }
+body.light .wallet-box { background:#f1f1f1; color:#0f172a; }
 
-.copy-btn{
-  cursor:pointer;
-  color:#22c55e;
-  font-weight:bold;
+.copy-btn { cursor:pointer; font-size:14px; color:#F3BA2F; }
+
+/* ================= SLIDE NOTE ================= */
+#slideNote {
+  position:fixed;
+  bottom:-100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#f97316;
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:14px;
+  box-shadow:0 0 15px rgba(0,0,0,0.5);
+  transition:bottom 0.5s ease-in-out;
+  z-index:999;
 }
 </style>
 </head>
 <body>
 
-<!-- ================= WALLET CARD ================= -->
 <div class="card">
 <h2>WALLET CONNECTED</h2>
-<p>0xA7f9C12D4E5F678901234567890ABCDEF1234567</p>
-<p style="color:#d93025;">LOCKED: $705,670</p>
+<p id="walletDisplay">:0xA7f9C12D4E5F678901234567890ABCDEF1234567</p>
+<p>LOCKED: $705670</p>
+<button onclick="toggleTheme()">Toggle Theme</button>
 </div>
 
-<!-- ================= BALANCE ================= -->
 <div class="card">
 <h3>Total Balance:</h3>
-<h2 id="balance">$78,690.00</h2>
-
-<button onclick="openDeposit()">Make Deposit</button>
-</div>
-
-<!-- ================= DEPOSIT POPUP ================= -->
-<div class="popup" id="depositPopup">
-<div class="popup-box">
-
-<h3>Select Network</h3>
-
-<select id="networkSelect" onchange="updateWallet()">
-<option value="USDT-ERC20">USDT (ERC20)</option>
-<option value="USDT-TRC20">USDT (TRC20)</option>
-<option value="SOL">SOL</option>
-<option value="BTC">BTC</option>
-<option value="BNB">BNB</option>
+<h2 id="balance">$78690.00</h2>
+<select id="pair">
+<option>BTC/USDT</option>
+<option>ETH/USDT</option>
+<option>SOL/USDT</option>
+<option>ADA/USDT</option>
+<option>XRP/USDT</option>
+<option>DOGE/USDT</option>
+<option>DOT/USDT</option>
+<option>LTC/USDT</option>
+<option>AVAX/USDT</option>
+<option>TRX/USDT</option>
 </select>
-
-<div class="wallet-box">
-<span id="walletAddress"></span>
-<span class="copy-btn" onclick="copyWallet()">📋</span>
+<button onclick="startStopTrade()">Start / Stop Trade</button>
+<button onclick="cancelTrade()">CANCEL Trade</button>
 </div>
 
-<input type="number" id="depositAmount" placeholder="Enter amount">
-
-<button onclick="confirmDeposit()">Confirm Deposit</button>
-
-<p id="depositStatus" style="text-align:center;margin-top:10px;"></p>
-
-<button onclick="closeDeposit()">Close</button>
-
+<div class="card">
+<h3>Deposit</h3>
+<button onclick="openDeposit()">Make Deposit</button>
+<p id="depositMsg"></p>
 </div>
+
+<div class="card">
+<h3>Withdrawal</h3>
+<input type="number" id="withdrawAmount" placeholder="Enter amount">
+<button id="withdrawBtn" onclick="unlockWithdrawal()">Unlock Withdrawal</button>
+<p id="withdrawMsg"></p>
 </div>
+
+<div class="card">
+<h3>Transaction History</h3>
+<ul id="history"></ul>
+</div>
+
+<div class="card nav">
+<button onclick="redirectWithdrawal()">Withdrawal Page</button>
+<button onclick="redirectHome()">Dashboard</button>
+</div>
+
+<!-- ================= POPUP ================= -->
+<div class="popup" id="depositPopup">
+  <div class="popup-box">
+    <h3>Select Network</h3>
+    <select id="networkSelect" onchange="updateWallet()">
+      <option value="USDT-ERC20">USDT (ERC20)</option>
+      <option value="USDT-TRC20">USDT (TRC20)</option>
+      <option value="SOL">SOL</option>
+      <option value="BTC">BTC</option>
+      <option value="BNB">BNB</option>
+    </select>
+
+    <div class="wallet-box">
+      <span id="walletAddress"></span>
+      <span class="copy-btn" onclick="copyWallet()">📋</span>
+    </div>
+
+    <input type="number" id="depositAmount" placeholder="Enter amount">
+    <button onclick="confirmDeposit()">Confirm Deposit</button>
+    <div class="loading" id="depositLoading"></div>
+    <button onclick="closeDeposit()">Close</button>
+  </div>
+</div>
+
+<div id="slideNote">You need minimum balance to enable successful withdrawal.</div>
 
 <script>
-
-/* ================= BALANCE ================= */
-
-let balance = parseFloat(localStorage.getItem("balance")) || 78690;
-const balanceEl = document.getElementById("balance");
-
-function updateBalance(){
-  balanceEl.innerText="$"+balance.toLocaleString(undefined,{minimumFractionDigits:2});
-  localStorage.setItem("balance",balance);
+// ================= THEME =================
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme',document.body.className);
 }
-
-updateBalance();
-
-/* ================= WALLET SYSTEM ================= */
-
-const wallets = {
- "USDT-ERC20":"0xA7f9C12D4E5F678901234567890ABCDEF1234567",
- "USDT-TRC20":"TXYz123456789ABCDEFGHJKLMNPQRST",
- "SOL":"9xQeWvG816bUx9EPfC9w8PqgkF5abcXYZ1234567",
- "BTC":"bc1qxy2kgdygjrsqtzq2n0yr5xyzabc123456",
- "BNB":"bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"
-};
-
-function openDeposit(){
-  document.getElementById("depositPopup").classList.add("active");
-  updateWallet();
-}
-
-function closeDeposit(){
-  document.getElementById("depositPopup").classList.remove("active");
-  document.getElementById("depositStatus").innerText="";
-  document.getElementById("depositAmount").value="";
-}
-
-function updateWallet(){
-  const network = document.getElementById("networkSelect").value;
-  document.getElementById("walletAddress").innerText = wallets[network];
-}
-
-function copyWallet(){
-  const address = document.getElementById("walletAddress").innerText;
-  navigator.clipboard.writeText(address);
-  alert("Wallet Address Copied!");
-}
-
-/* ================= DEPOSIT SYSTEM ================= */
-
-function confirmDeposit(){
-
-  const amount = parseFloat(document.getElementById("depositAmount").value);
-  const status = document.getElementById("depositStatus");
-
-  if(!amount || amount <= 0){
-    status.style.color="red";
-    status.innerText="Enter valid amount.";
-    return;
-  }
-
-  status.style.color="white";
-  status.innerText="Confirming deposit...";
-
-  setTimeout(()=>{
-    balance += amount;
-    updateBalance();
-    status.style.color="#00c087";
-    status.innerText="Deposit Successful!";
-    setTimeout(closeDeposit,1500);
-  },3000);
-}
-
-</script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded',()=>{
+  const th
