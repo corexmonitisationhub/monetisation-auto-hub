@@ -2,31 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>CoreX Xchange Monetization and Activation Sandbox</title>
 <style>
 /* ================= GLOBAL ================= */
 body {
   margin:0;
-  background:#0b0f14;
   font-family:system-ui;
-  color:white;
   display:flex;
   flex-direction:column;
   align-items:center;
   min-height:100vh;
   padding:20px;
   transition: background 0.3s, color 0.3s;
+  background: linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
 }
-body.light { background:#f9fafb; color:#0f172a; }
+body.light {
+  background:#f9fafb;
+  color:#0f172a;
+}
 
 .card {
-  background:#111827;
+  background:#1f2937;
   padding:20px;
   border-radius:18px;
   width:100%;
   max-width:400px;
-  box-shadow:0 0 30px rgba(0,0,0,.4);
+  box-shadow:0 8px 25px rgba(0,0,0,0.4);
   margin-bottom:20px;
   transition: background 0.3s, color 0.3s;
 }
@@ -36,7 +39,7 @@ input, select {
   width:100%;
   padding:12px;
   margin:10px 0;
-  background:#0b0f14;
+  background:#111827;
   border:1px solid #263041;
   border-radius:10px;
   color:white;
@@ -52,7 +55,7 @@ button {
   color:white;
   font-weight:700;
   cursor:pointer;
-  transition: .3s;
+  transition:0.3s;
 }
 button:hover { opacity:0.9; }
 
@@ -72,7 +75,7 @@ button:hover { opacity:0.9; }
   z-index:999;
 }
 .popup-box {
-  background:#111827;
+  background:#1f2937;
   padding:20px;
   width:90%;
   max-width:400px;
@@ -86,7 +89,7 @@ body.light .popup-box { background:#fff; color:#0f172a; }
   display:flex;
   justify-content:space-between;
   align-items:center;
-  background:#0b0f14;
+  background:#111827;
   padding:8px;
   border-radius:6px;
   margin-bottom:10px;
@@ -197,5 +200,4 @@ function toggleTheme(){
   document.body.classList.toggle('light');
   localStorage.setItem('theme',document.body.className);
 }
-document.addEventListener('DOMContentLoaded',()=>{
-  const th
+document.addEventListe
