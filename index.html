@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CoreX Xchange Monetization and Activation Sandbox</title>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  opacity:0;
+  transition:.4s;
+}
+.card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:40px;
+  border-radius:20px;
+  width:360px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+h2{margin-top:0}
+input,select{
+  width:100%;
+  padding:14px;
+  margin:12px 0;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  color:white;
+}
+button{
+  width:100%;
+  padding:15px;
+  margin-top:10px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+button:hover{transform:scale(1.03)}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>CoreX Xchange Monetization and Activation Sandbox</h2>
+<select id="net">
+<option>TRX</option>
+<option>BTC</option>
+<option>ERC</option>
+<option>BNB</option>
+<option>SOL</option>
+</select>
+<input id="addr" placeholder="Wallet address">
+<button onclick="location='home.html'">Secure Login</button>
+</div>
+
+<script>
+setTimeout(()=>document.body.style.opacity=1,300);
+</script>
+
+</body>
+</html>
