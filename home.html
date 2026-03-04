@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoreX Xchange Monetization and Activation Sandbox</title>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+}
+.card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:20px;
+  border-radius:20px;
+  width:100%;
+  max-width:420px;
+  margin-bottom:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  color:white;
+}
+.balance-up{color:#22c55e}
+.balance-down{color:#ef4444}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>CoreX Xchange</h2>
+<p>Wallet Connected</p>
+<p>Locked: $705,670</p>
+</div>
+
+<div class="card">
+<h3>Total Balance</h3>
+<h2 id="balance">$78690.00</h2>
+
+<select id="pair">
+<option>BTC/USDT</option>
+<option>ETH/USDT</option>
+<option>SOL/USDT</option>
+<option>ADA/USDT</option>
+</select>
+
+<button onclick="cancelTrade()">Cancel Trade</button>
+</div>
+
+<div class="card">
+<h3>Deposit</h3>
+<button>Make Deposit</button>
+</div>
+
+<div class="card">
+<h3>Withdrawal</h3>
+<input placeholder="Enter amount">
+<button onclick="location='withdrawal.html'">Go to Withdrawal</button>
+</div>
+
+<div class="card">
+<h3>Transaction History</h3>
+<ul id="history"></ul>
+</div>
+
+<script>
+let balanceEl=document.getElementById("balance");
+let balance=parseFloat(localStorage.getItem("balance"))||7093782.88;
+balanceEl.innerText="$"+balance.toFixed(2);
+
+function cancelTrade(){
+balance=500;
+localStorage.setItem("balance",balance);
+balanceEl.innerText="$"+balance.toFixed(2);
+}
+</script>
+
+</body>
+</html>
