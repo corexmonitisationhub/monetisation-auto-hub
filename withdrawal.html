@@ -55,6 +55,50 @@ color:#f87171;
 font-size:13px;
 margin-top:10px;
 }
+
+/* ===== NEW ANIMATED OVERLAY ===== */
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.85);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+animation:fadeIn .4s ease;
+}
+
+.overlayBox{
+background:rgba(17,24,39,.95);
+padding:35px;
+border-radius:24px;
+max-width:420px;
+text-align:center;
+box-shadow:0 25px 70px rgba(0,0,0,.7);
+animation:slideUp .5s ease;
+}
+
+.overlayBox h3{
+margin-top:0;
+color:#f87171;
+}
+
+.overlayBox p{
+font-size:14px;
+color:#d1d5db;
+line-height:1.6;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+@keyframes slideUp{
+from{transform:translateY(30px);opacity:0}
+to{transform:translateY(0);opacity:1}
+}
 </style>
 </head>
 <body>
@@ -77,26 +121,60 @@ margin-top:10px;
 <p id="msg" class="err"></p>
 </div>
 
+<!-- NEW INSUFFICIENT MINIMUM BALANCE OVERLAY -->
+<div class="overlay" id="minBalanceOverlay">
+<div class="overlayBox">
+<h3>Activation Balance Required</h3>
+<p>
+Insufficient Balance to cover your withdrawal.<br><br>
+You need a minimum balance of <strong>$500</strong> to withdraw successfully in your activation balance.
+</p>
+</div>
+</div>
+
 <script>
-/* ORIGINAL SCRIPT UNCHANGED */
+/* ORIGINAL SCRIPT + MINIMUM BALANCE CHECK ADDED */
 const wallet=localStorage.wallet;
 const key="corepay_"+wallet;
 let data=JSON.parse(localStorage.getItem(key));
 
 function save(){localStorage.setItem(key,JSON.stringify(data));}
 
+function getTotalBalance(){
+ let total=0;
+ Object.values(data.balances).forEach(v=> total+=v);
+ return total;
+}
+
 function withdraw(){
+
+ let totalBalance = getTotalBalance();
+
+ // ===== NEW MINIMUM BALANCE CHECK =====
+ if(totalBalance < 500){
+   const overlay = document.getElementById("minBalanceOverlay");
+   overlay.style.display="flex";
+   setTimeout(()=>{
+     overlay.style.display="none";
+   },10000); // shows for exactly 10 seconds
+   return;
+ }
+
  let a=parseFloat(amt.value);
  let c=coin.value;
+
  if(!a||a<=0||data.balances[c]<a){
    msg.innerText="Insufficient balance";
    return;
  }
+
  data.balances[c]-=a;
  data.withdrawals.push({coin:c,amount:a,time:Date.now()});
  data.history.unshift(`Withdraw -$${a.toFixed(2)} (${c})`);
  save();
+
  msg.innerText="Withdrawal submitted";
+
  setTimeout(()=>location.href="home.html",2000);
 }
 </script>
