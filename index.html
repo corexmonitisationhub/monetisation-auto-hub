@@ -162,9 +162,9 @@ display:inline-block;
 
 <div class="pop" id="fingerPop">
 <div class="box">
-<h3 id="scanTitle">Fingerprint Scan</h3>
+<h3 id="scanTitle">Wallet Verifying</h3>
 <div class="scan"></div>
-<p id="scanText">Scanning identity...</p>
+<p id="scanText">Scanning Wallet Verification...</p>
 </div>
 </div>
 
@@ -221,8 +221,8 @@ return rules[net].test(val);
 window.finger = function(){
 if(addr.value.length<5){alert("Enter wallet");return;}
 fingerPop.style.display="flex";
-scanTitle.innerText="Fingerprint Scan";
-scanText.innerText="Scanning identity...";
+scanTitle.innerText="Wallet Scan";
+scanText.innerText="Scanning verification...";
 let ok=validWallet(net.value,addr.value);
 let delay= ok ? 10000 : 6000;
 setTimeout(()=>{
