@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CorePay Dashboard</title>
+
+<style>
+body{
+margin:0;
+background:linear-gradient(135deg,#0f172a,#111827,#0b1020);
+font-family:system-ui,-apple-system,Segoe UI,Roboto;
+color:white;
+}
+
+.header{
+background:rgba(17,24,39,.9);
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+
+.grid{
+padding:30px;
+display:grid;
+gap:25px;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+max-width:1000px;
+margin:auto;
+}
+
+.card{
+background:rgba(17,24,39,.85);
+padding:24px;
+border-radius:24px;
+box-shadow:0 25px 70px rgba(0,0,0,.6);
+}
+
+button{
+background:linear-gradient(90deg,#22c55e,#6366f1);
+border:none;
+color:white;
+padding:12px;
+border-radius:16px;
+cursor:pointer;
+width:100%;
+margin-top:10px;
+font-weight:600;
+transition:.3s;
+}
+
+button:hover{
+transform:translateY(-2px);
+box-shadow:0 12px 30px rgba(99,102,241,.4);
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#0f172a;
+border:1px solid #1e293b;
+border-radius:14px;
+color:white;
+}
+
+.addrBox{
+word-break:break-all;
+font-size:13px;
+background:#0f172a;
+padding:12px;
+border-radius:14px;
+margin-top:10px;
+border:1px solid #1e293b;
+}
+
+.small{font-size:12px;color:#9ca3af}
+.actionRow{display:flex;gap:10px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<strong>CorePay</strong>
+<div id="bal">$0.00</div>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Deposit Funds</h3>
+
+<select id="depNet" onchange="updateWallet()">
+<option value="BTC">BTC</option>
+<option value="ETH">USDT ERC20</option>
+<option value="TRX">USDT TRC20</option>
+<option value="SOL">SOL</option>
+<option value="BNB">BNB</option>
+</select>
+
+<div class="addrBox" id="walletAddr"></div>
+<p class="small">Send only using the selected network</p>
+
+<input id="depAmt" placeholder="Deposit amount">
+
+<div class="actionRow">
+<button onclick="confirmDeposit()">Confirm Deposit</button>
+<button onclick="goWithdraw()">Withdraw</button>
+</div>
+
+<p id="depMsg" class="small"></p>
+</div>
+
+<div class="card">
+<h3>History</h3>
+<div id="history" class="small"></div>
+</div>
+
+</div>
+
+<script>
+/* ORIGINAL SCRIPT UNCHANGED */
+const wallets={
+BTC:"bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+ETH:"0xA7f9C12D4E5F678901234567890ABCDEF1234567",
+TRX:"TXYz123456789ABCDEFGHJKLMNPQRST",
+SOL:"9xQeWvG816bUx9EPfC9w8PqgkF5abcXYZ1234567",
+BNB:"bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"
+};
+
+const wallet = localStorage.wallet || "demo";
+const key = "corepay_" + wallet;
+let data = JSON.parse(localStorage.getItem(key));
+
+function save(){
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function updateWallet(){
+  walletAddr.innerText = wallets[depNet.value];
+}
+updateWallet();
+
+function render(){
+  let total = 0;
+  Object.values(data.balances).forEach(v => total += v);
+  bal.innerText = "$" + total.toFixed(2);
+
+  history.innerHTML = data.history.length
+    ? data.history.map(h => `<div>• ${h}</div>`).join("")
+    : "<div>No activity yet</div>";
+}
+render();
+
+function confirmDeposit(){
+  let amt = parseFloat(depAmt.value);
+  if(!amt || amt <= 0){
+    depMsg.innerText = "Invalid amount";
+    return;
+  }
+  depMsg.innerText = "Confirming deposit...";
+  setTimeout(()=>{
+    data.balances[depNet.value] += amt;
+    data.history.unshift(`Deposit +$${amt.toFixed(2)} (${depNet.value})`);
+    save();
+    render();
+    depMsg.innerText = "Deposit successful";
+    depAmt.value = "";
+  },3000);
+}
+
+function goWithdraw(){
+  location.href = "withdrawal.html";
+}
+</script>
+
+</body>
+</html>
