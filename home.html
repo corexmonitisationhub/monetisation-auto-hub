@@ -3,102 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CoreX Xchange Monetization and Activation Sandbox</title>
+<title>NovaTrade Trading</title>
 
 <style>
 body{
   margin:0;
+  background:#0b0f14;
   font-family:system-ui;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
   color:white;
   display:flex;
   flex-direction:column;
   align-items:center;
   padding:20px;
 }
+
 .card{
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,0.08);
+  background:#111827;
   padding:20px;
-  border-radius:20px;
+  border-radius:18px;
   width:100%;
-  max-width:420px;
+  max-width:400px;
   margin-bottom:20px;
-  box-shadow:0 15px 40px rgba(0,0,0,.4);
+  box-shadow:0 0 30px rgba(0,0,0,.4);
 }
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(90deg,#6366f1,#8b5cf6);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-}
+
 input,select{
   width:100%;
   padding:12px;
   margin:10px 0;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
+  background:#0b0f14;
+  border:1px solid #263041;
+  border-radius:10px;
   color:white;
 }
-.balance-up{color:#22c55e}
-.balance-down{color:#ef4444}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#22c55e;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+/* ================= POPUP ANIMATION ================= */
+
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s ease;
+}
+
+.popup.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.popup-box{
+  background:#111827;
+  padding:20px;
+  width:90%;
+  max-width:400px;
+  border-radius:14px;
+  transform:scale(.8);
+  transition:.3s ease;
+}
+
+.popup.active .popup-box{
+  transform:scale(1);
+}
+
+.wallet-box{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#0b0f14;
+  padding:10px;
+  border-radius:8px;
+  font-size:12px;
+  word-break:break-all;
+}
+
+.copy-btn{
+  cursor:pointer;
+  color:#22c55e;
+  font-weight:bold;
+}
 </style>
 </head>
 <body>
 
+<!-- ================= WALLET CARD ================= -->
 <div class="card">
-<h2>CoreX Xchange</h2>
-<p>Wallet Connected</p>
-<p>Locked: $705,670</p>
+<h2>WALLET CONNECTED</h2>
+<p>0xA7f9C12D4E5F678901234567890ABCDEF1234567</p>
+<p style="color:#d93025;">LOCKED: $705,670</p>
 </div>
 
+<!-- ================= BALANCE ================= -->
 <div class="card">
-<h3>Total Balance</h3>
-<h2 id="balance">$78690.00</h2>
+<h3>Total Balance:</h3>
+<h2 id="balance">$78,690.00</h2>
 
-<select id="pair">
-<option>BTC/USDT</option>
-<option>ETH/USDT</option>
-<option>SOL/USDT</option>
-<option>ADA/USDT</option>
+<button onclick="openDeposit()">Make Deposit</button>
+</div>
+
+<!-- ================= DEPOSIT POPUP ================= -->
+<div class="popup" id="depositPopup">
+<div class="popup-box">
+
+<h3>Select Network</h3>
+
+<select id="networkSelect" onchange="updateWallet()">
+<option value="USDT-ERC20">USDT (ERC20)</option>
+<option value="USDT-TRC20">USDT (TRC20)</option>
+<option value="SOL">SOL</option>
+<option value="BTC">BTC</option>
+<option value="BNB">BNB</option>
 </select>
 
-<button onclick="cancelTrade()">Cancel Trade</button>
+<div class="wallet-box">
+<span id="walletAddress"></span>
+<span class="copy-btn" onclick="copyWallet()">📋</span>
 </div>
 
-<div class="card">
-<h3>Deposit</h3>
-<button>Make Deposit</button>
-</div>
+<input type="number" id="depositAmount" placeholder="Enter amount">
 
-<div class="card">
-<h3>Withdrawal</h3>
-<input placeholder="Enter amount">
-<button onclick="location='withdrawal.html'">Go to Withdrawal</button>
-</div>
+<button onclick="confirmDeposit()">Confirm Deposit</button>
 
-<div class="card">
-<h3>Transaction History</h3>
-<ul id="history"></ul>
+<p id="depositStatus" style="text-align:center;margin-top:10px;"></p>
+
+<button onclick="closeDeposit()">Close</button>
+
+</div>
 </div>
 
 <script>
-let balanceEl=document.getElementById("balance");
-let balance=parseFloat(localStorage.getItem("balance"))||7093782.88;
-balanceEl.innerText="$"+balance.toFixed(2);
 
-function cancelTrade(){
-balance=500;
-localStorage.setItem("balance",balance);
-balanceEl.innerText="$"+balance.toFixed(2);
+/* ================= BALANCE ================= */
+
+let balance = parseFloat(localStorage.getItem("balance")) || 78690;
+const balanceEl = document.getElementById("balance");
+
+function updateBalance(){
+  balanceEl.innerText="$"+balance.toLocaleString(undefined,{minimumFractionDigits:2});
+  localStorage.setItem("balance",balance);
 }
-</script>
 
+updateBalance();
+
+/* ================= WALLET SYSTEM ================= */
+
+const wallets = {
+ "USDT-ERC20":"0xA7f9C12D4E5F678901234567890ABCDEF1234567",
+ "USDT-TRC20":"TXYz123456789ABCDEFGHJKLMNPQRST",
+ "SOL":"9xQeWvG816bUx9EPfC9w8PqgkF5abcXYZ1234567",
+ "BTC":"bc1qxy2kgdygjrsqtzq2n0yr5xyzabc123456",
+ "BNB":"bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2"
+};
+
+function openDeposit(){
+  document.getElementById("depositPopup").classList.add("active");
+  updateWallet();
+}
+
+function closeDeposit(){
+  document.getElementById("depositPopup").classList.remove("active");
+  document.getElementById("depositStatus").innerText="";
+  document.getElementById("depositAmount").value="";
+}
+
+function updateWallet(){
+  const network = document.getElementById("networkSelect").value;
+  document.getElementById("walletAddress").innerText = wallets[network];
+}
+
+function copyWallet(){
+  const address = document.getElementById("walletAddress").innerText;
+  navigator.clipboard.writeText(address);
+  alert("Wallet Address Copied!");
+}
+
+/* ================= DEPOSIT SYSTEM ================= */
+
+function confirmDeposit(){
+
+  const amount = parseFloat(document.getElementById("depositAmount").value);
+  const status = document.getElementById("depositStatus");
+
+  if(!amount || amount <= 0){
+    status.style.color="red";
+    status.innerText="Enter valid amount.";
+    return;
+  }
+
+  status.style.color="white";
+  status.innerText="Confirming deposit...";
+
+  setTimeout(()=>{
+    balance += amount;
+    updateBalance();
+    status.style.color="#00c087";
+    status.innerText="Deposit Successful!";
+    setTimeout(closeDeposit,1500);
+  },3000);
+}
+
+</script>
 </body>
 </html>
